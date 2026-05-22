@@ -12,20 +12,16 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Clean and Install Dependencies
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller pandas openpyxl
-        # إذا كان ملف requirements.txt موجوداً سيتم تثبيته، وإذا فشل لن تتوقف العملية
-        if (Test-Path requirements.txt) { pip install -r requirements.txt }
+        pip install -r requirements.txt
 
-    - name: Build EXE with PyInstaller
-      # استخدمنا --collect-submodules لضمان تجميع كل أجزاء مكتبة pandas
-      run: |
-        pyinstaller --onefile --noconsole --clean --collect-submodules pandas vacations.py
+    - name: Create EXE
+      # هذا السطر مهم جداً لأنه يحل مشكلة الـ Recursion اللي تسبب الـ Exit code 1
+      run: pyinstaller --onefile --noconsole --clean vacations.py
 
     - name: Save Result
-      if: always() # سيحاول حفظ النتائج حتى لو حدث فشل جزئي لفحص المجلدات
       uses: actions/upload-artifact@v4
       with:
         name: Final_Vacations_Program
