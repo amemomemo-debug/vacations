@@ -12,18 +12,20 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install PyInstaller and Libraries
+    - name: Clean and Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        # تثبيت المكتبات الأساسية التي يحتاجها كودك لضمان النجاح
         pip install pyinstaller pandas openpyxl
+        # إذا كان ملف requirements.txt موجوداً سيتم تثبيته، وإذا فشل لن تتوقف العملية
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
 
-    - name: Create EXE
-      # تحويل ملفك vacations.py مع تنظيف الملفات المؤقتة
-      run: pyinstaller --onefile --noconsole --clean vacations.py
+    - name: Build EXE with PyInstaller
+      # استخدمنا --collect-submodules لضمان تجميع كل أجزاء مكتبة pandas
+      run: |
+        pyinstaller --onefile --noconsole --clean --collect-submodules pandas vacations.py
 
     - name: Save Result
+      if: always() # سيحاول حفظ النتائج حتى لو حدث فشل جزئي لفحص المجلدات
       uses: actions/upload-artifact@v4
       with:
         name: Final_Vacations_Program
