@@ -1,22 +1,29 @@
 name: Build My EXE
 on: [push]
+
 jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4 # تحديث لـ v4
+    - uses: actions/checkout@v4
+
     - name: Set up Python
-      uses: actions/setup-python@v5 # تحديث لـ v5
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
+
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install pyinstaller
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
+
     - name: Create EXE
-      run: pyinstaller --onefile --noconsole vacations.py # تأكد أن الاسم يطابق ملفك
+      # قمنا بتغيير الاسم هنا ليتطابق مع ملفك vacations.py
+      run: pyinstaller --onefile --noconsole --clean vacations.py
+
     - name: Save Result
-      uses: actions/upload-artifact@v4 # هذا هو الحل (v4)
+      uses: actions/upload-artifact@v4
       with:
-        name: My_Program_EXE
+        name: My_Vacations_App
         path: dist/*.exe
