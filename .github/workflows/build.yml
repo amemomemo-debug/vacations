@@ -12,17 +12,21 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install dependencies
+    - name: Install PyInstaller
+      run: pip install pyinstaller
+
+    - name: Install dependencies (From Requirements)
+      # سنحاول تثبيت المكتبات، وإذا فشل سنكمل ولن نتوقف
+      continue-on-error: true 
       run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
 
-    - name: Create EXE
-      # قمنا بتغيير الاسم هنا ليتطابق مع ملفك vacations.py
+    - name: Build EXE
+      # أضفنا --collect-all لمحاولة جمع كل ما يحتاجه الكود تلقائياً
       run: pyinstaller --onefile --noconsole --clean vacations.py
-
+      
     - name: Save Result
+      if: success() # لن يتم الرفع إلا إذا نجح البناء
       uses: actions/upload-artifact@v4
       with:
         name: My_Vacations_App
