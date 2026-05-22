@@ -1,0 +1,22 @@
+name: Build My EXE
+on: [push] # سيبدأ التحويل تلقائياً بمجرد الحفظ
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        pip install pyinstaller
+        if (Test-Path requirements.txt) { pip install -r requirements.txt }
+    - name: Create EXE
+      run: pyinstaller --onefile --noconsole main.py # تأكد أن اسم ملفك هو main.py أو غيره هنا
+    - name: Save Result
+      uses: actions/upload-artifact@v3
+      with:
+        name: My_Program_EXE
+        path: dist/*.exe
