@@ -14,7 +14,7 @@ jobs:
         pip install pyinstaller
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
     - name: Create EXE
-      run: pyinstaller --onefile --noconsole main.py # تأكد أن اسم ملفك هو main.py أو غيره هنا
+      run: pyinstaller --onefile --noconsole vacations.py # تأكد أن اسم ملفك هو main.py أو غيره هنا
     - name: Save Result
       uses: actions/upload-artifact@v3
       with:
