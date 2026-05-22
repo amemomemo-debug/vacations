@@ -1,12 +1,12 @@
 name: Build My EXE
-on: [push] # سيبدأ التحويل تلقائياً بمجرد الحفظ
+on: [push]
 jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4 # تحديث لـ v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # تحديث لـ v5
       with:
         python-version: '3.9'
     - name: Install dependencies
@@ -14,9 +14,9 @@ jobs:
         pip install pyinstaller
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
     - name: Create EXE
-      run: pyinstaller --onefile --noconsole vacations.py # تأكد أن اسم ملفك هو main.py أو غيره هنا
+      run: pyinstaller --onefile --noconsole vacations.py # تأكد أن الاسم يطابق ملفك
     - name: Save Result
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # هذا هو الحل (v4)
       with:
         name: My_Program_EXE
         path: dist/*.exe
