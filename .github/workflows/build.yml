@@ -1,4 +1,4 @@
-name: Build My Vacations App
+name: Build Protected Vacations App
 on: [push]
 
 jobs:
@@ -10,20 +10,26 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10' # رفعنا النسخة لـ 3.10 لتوافق أفضل مع pandas 2.2
+        python-version: '3.10'
+        cache: 'pip'
 
-    - name: Install Correct Versions
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        # تثبيت النسخ المحددة لضمان التوافق
-        pip install numpy==1.26.4 pandas==2.2.2 openpyxl==3.1.2 pyinstaller==6.6.0
+        # تثبيت النسخ المتوافقة لضمان استقرار Pandas و Numpy ومنع الـ Binary Incompatibility
+        pip install numpy==1.26.4 pandas==2.2.2 openpyxl==3.1.2 pyinstaller==6.6.0 pyarmor
 
-    - name: Create EXE
-      # أضفنا --collect-all لضمان سحب كل ملفات pandas و numpy داخل الـ EXE
-      run: pyinstaller --onefile --noconsole --clean --collect-all pandas --collect-all numpy vacations.py
+    - name: Obfuscate Code (PyArmor)
+      # تشفير الكود لحمايته من الاستخراج والاطلاع (سرية تامة)
+      run: pyarmor gen vacations.py
 
-    - name: Save Result
+    - name: Create Final EXE
+      # بناء الملف النهائي من النسخة المشفرة مع سحب كافة ملحقات المكتبات الضخمة
+      run: |
+        pyinstaller --onefile --noconsole --clean --collect-all pandas --collect-all numpy dist/vacations.py
+
+    - name: Upload Protected Program
       uses: actions/upload-artifact@v4
       with:
-        name: Vacations_Fixed_Version
+        name: Vacations_System_Protected
         path: dist/*.exe
