@@ -15,24 +15,25 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        # أضفنا customtkinter هنا تحسباً إذا كنت تستخدمها في واجهتك
         pip install numpy==1.26.4 pandas==2.2.2 openpyxl==3.1.2 pyinstaller==6.6.0 pyarmor customtkinter
 
     - name: Obfuscate Code (PyArmor)
       run: pyarmor gen vacations.py
 
     - name: Create Final EXE
-      # التعديل هنا: أضفنا --collect-all لكل المكتبات المرتبطة بالواجهة والبيانات
+      # قمنا بإضافة --collect-submodules و --collect-all لضمان شمولية tkinter و pandas
       run: |
         pyinstaller --onefile --noconsole --clean `
         --collect-all pandas `
         --collect-all numpy `
-        --hidden-import tkinter `
-        --hidden-import _tkinter `
+        --collect-all tkinter `
+        --collect-all customtkinter `
+        --hidden-import tkinter.messagebox `
+        --hidden-import tkinter.filedialog `
         dist/vacations.py
 
     - name: Upload Protected Program
       uses: actions/upload-artifact@v4
       with:
-        name: Vacations_System_Final
+        name: Vacations_System_Final_Fixed
         path: dist/*.exe
